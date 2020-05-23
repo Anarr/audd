@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -18,6 +19,8 @@ const (
 	PlatformSpoify = "spotify"
 	//PlatformAppleMusic display apple music platform
 	PlatformAppleMusic = "apple_music"
+	//PlatformDeezer display deezer music platform
+	PlatformDeezer = "deezer"
 )
 
 //AudioReader containst audio client methods
@@ -79,20 +82,31 @@ func (ac *AudioClient) Parse(source string) (*Response, error) {
 
 	res, err := http.PostForm(auddURL, data)
 
-	check(err)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
-	check(err)
+	if err != nil {
+		return nil, err
+	}
 
 	if len(body) > 0 {
 		var auddRes auddResponse
-		check(auddRes.unMarshal(body))
+
+		err := auddRes.unMarshal(body)
+		if err != nil {
+			return nil, err
+		}
 
 		switch auddRes.Status {
 		case statusSuccess:
-			return &Response{Title: auddRes.Result.Title}, nil
+			if auddRes.Result != nil {
+				return &Response{Title: auddRes.Result.Title}, nil
+			}
 		case statusErr:
 			return nil, errors.New(auddRes.Error.ErrorMessage)
 		}
@@ -114,10 +128,4 @@ func (audd *auddResponse) unMarshal(data []byte) error {
 //NewClient create new audio detection client
 func NewClient(reader AudioReader) *AudioClient {
 	return &AudioClient{}
-}
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
