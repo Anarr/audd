@@ -3,6 +3,7 @@ package audd
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -110,6 +111,8 @@ func (ac *AudioClient) Parse(source string) (*Response, error) {
 		case statusErr:
 			return nil, errors.New(auddRes.Error.ErrorMessage)
 		}
+
+		fmt.Println("audd res from service", string(body))
 	}
 
 	return nil, errors.New(errServiceUnavailable)
