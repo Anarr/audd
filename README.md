@@ -3,7 +3,8 @@
 Golang client for audd.io (https://audd.io/)
 
 ## Getting Started
-
+audd.io is Audio Recognition API service. The servic allows you to recognize audio files, recordings and audio streams.
+This packkage helps you to integrate audd.io service in your Golang project easily.
 
 ### Prerequisites
 
@@ -15,19 +16,9 @@ Give examples
 
 ### Installing
 
+```
 go get -u github.com/Anarr/audd Run this command inside your project
-
 ```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
@@ -42,11 +33,19 @@ Give an example
 ```
 
 ### And coding style tests
-
-Explain what these tests test and why
+To start implement package use the example below:
 
 ```
-Give an example
+var audioClient audd.AuidoClient
+audioClient.SetToken("YOUR_API_TOKEN").SetPlatform(audd.PlatformAppleMusic)
+res, err := ac.Parse("AUDIO_FILE_URL")
+
+if err != nil {
+    log.Println(err)
+    return
+}
+
+fmt.Println(res)
 ```
 
 ## Deployment
